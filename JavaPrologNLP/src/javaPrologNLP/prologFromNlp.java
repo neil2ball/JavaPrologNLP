@@ -206,6 +206,11 @@ public class prologFromNlp {
 					}
 					
 					System.out.println("above initialNounPhrase");
+					
+					//This will need to change in the future. We really need to test for
+					//NPs that are not within VPs.
+					//There could be NPs within VPs that come first in a sentence.
+					//Looking back on this I am not sure what I did. I think I made the above mentioned mistake.
 					String initialNounPhrase = extractor(sentenceList.get(y), "(NP ");
 					
 					coordConjCount = coordConjCounter(initialNounPhrase);
@@ -229,7 +234,13 @@ public class prologFromNlp {
 						}
 						
 						for (int a = 0; a < nounSplit.size(); a++) {
-							nounPhraseList.add("(NP " + extractor(nounSplit.get(a), "(NN") + ")");
+							
+							//Check for noun within verb phrase
+							String nounBuffer = extractor(nounSplit.get(a), "(NN");
+							
+							if (!initialVerbPhrase.contains(nounBuffer)) {
+								nounPhraseList.add("(NP " + nounBuffer + ")");
+							}
 						}
 						
 					} else {
@@ -239,6 +250,7 @@ public class prologFromNlp {
 					for (int z = 0; z < nounPhraseList.size(); z++) {
 						for (int a = 0; a < verbPhraseList.size(); a++) {
 							System.out.println("enter nested foor loop simpleSentenceList.add");
+
 							simpleSentenceList.add(nounPhraseList.get(z) + " " + verbPhraseList.get(a));
 						}
 					}
